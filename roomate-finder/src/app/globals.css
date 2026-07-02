@@ -1,0 +1,11 @@
+@import "tailwindcss";
+@plugin "daisyui";
+
+@source "./src/**/*.{js,jsx,ts,tsx}";
+@source "./app/**/*.{js,jsx,ts,tsx}";
+
+body {
+  font-family: monospace, serif;
+  background-color: #ffffff;
+  color: #000000;
+}
