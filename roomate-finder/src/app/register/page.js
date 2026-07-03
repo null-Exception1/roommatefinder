@@ -8,15 +8,12 @@ export default function Login() {
 
           <legend className="fieldset-legend text-black">Register</legend>
 
-          <label className="label">Admission Number (will be hashed) * </label>
+          <label className="label">Admission Number (will be hashed with firstname) * </label>
           <input type="email" className="input bg-white border-2 border-blue-700 outline-blue-700" placeholder="Admn no." />
 
-          <label className="label">Name </label>
-          <input type="email" className="input bg-white border-2 border-blue-700 outline-blue-700" placeholder="Admn no." />
+          <label className="label">First name (Password) *</label>
+          <input type="email" className="input bg-white border-2 border-blue-700 outline-blue-700" placeholder="First no." />
 
-
-          <label className="label">Password * </label>
-          <input type="password" className="input bg-white border-2 border-blue-700 outline-blue-700" placeholder="Password" />
           <br />
           <select defaultValue="Social" className="select bg-white text-black">
             <option className="bg-white text-black">Discord</option>
