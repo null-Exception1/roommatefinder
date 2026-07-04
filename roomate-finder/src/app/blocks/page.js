@@ -1,8 +1,17 @@
+"use client"
 import Navbar from "@/components/navbar";
 import Card from "@/components/card";
 import Breadcumbs from "@/components/breadcrumbs";
+import { useEffect, useState } from "react";
 
 export default function Blocks() {
+  const url = `http://localhost:8080/blocks`;
+  const [loaded, setLoaded] = useState(false)
+  const [loaded_data, setLoadedData] = useState([])
+
+  useEffect(() => {
+    fetch(url).then(response => response.json()).then(data => { setLoaded(true); setLoadedData(data); console.log("Data:", loaded, data); })
+  }, [])
   return (
     <div className="flex justify-center">
       <Navbar />
@@ -29,18 +38,17 @@ export default function Blocks() {
         <h1 className="pl-10 pt-2 text-2xl">Blocks</h1>
 
         <div className="grid grid-cols-3 p-5 *:gap-16 gap-16 ml-10">
-          <Card BlockID="1" PartialCount="5" FullCount="5" />
-          <Card BlockID="2" PartialCount="3" FullCount="7" />
-          <Card BlockID="3" PartialCount="6" FullCount="4" />
-          <Card BlockID="4" PartialCount="2" FullCount="8" />
-          <Card BlockID="5" PartialCount="4" FullCount="6" />
-          <Card BlockID="6" PartialCount="7" FullCount="3" />
-          <Card BlockID="1" PartialCount="5" FullCount="5" />
-          <Card BlockID="2" PartialCount="3" FullCount="7" />
-          <Card BlockID="3" PartialCount="6" FullCount="4" />
-          <Card BlockID="4" PartialCount="2" FullCount="8" />
-          <Card BlockID="5" PartialCount="4" FullCount="6" />
-          <Card BlockID="6" PartialCount="7" FullCount="3" />
+          {loaded ? (
+            Object.entries(loaded_data).map(([blockID, value]) => (
+              <Card
+                key={blockID}
+                BlockID={blockID}
+                PartialCount={value.PartialCount}
+                FullCount={value.FullCount}
+              />
+            ))
+
+          ) : (<div></div>)}
         </div>
 
       </div>

@@ -1,21 +1,29 @@
 import Navbar from "@/components/navbar";
 import RoomCard from "@/components/roomcard";
 import Breadcumbs from "@/components/breadcrumbs";
+
+// This remains an async Server Component
 export default async function Block({ params }) {
-  const { id } = await params;
+  const { id } = await params; // Await params directly on the server
+
+  const res = await fetch(`http://localhost:8080/rooms?block=${id}`);
+  const loaded_data = await res.json();
 
   return (
     <div className="flex justify-center">
       <Navbar />
       <div className="flex flex-col m-20 flex-wrap w-11/12 border-2 border-black rounded-3xl">
-        <div className="">
+        <div>
           <Breadcumbs crumbs={["Home", "Blocks", `Block ${id}`]} links={["/", "/blocks", `/block/${id}`]} />
           <h1 className="pl-10 pt-5 text-2xl">BLOCK {id}</h1>
           <div className="grid grid-cols-3 p-10">
-            <RoomCard RoomID="1" People={[{ "name": "Shaurya", "social": "discordusername", "socialtype": "discord" }, { "name": "Shauryaaaa", "social": "9958813899", "socialtype": "whatsapp" }, { "name": "Shauryaaaa", "social": "9958813899", "socialtype": "whatsapp" }, { "name": "Shauryaaaa", "social": "discordusername", "socialtype": "discord" }]} />
-            <RoomCard RoomID="1" People={[{ "name": "Shaurya", "social": "discordusername", "socialtype": "discord" }, { "name": "Shauryaaaa", "social": "9958813899", "socialtype": "whatsapp" }, { "name": "Shauryaaaa", "social": "9958813899", "socialtype": "whatsapp" }, { "name": "Shauryaaaa", "social": "discordusername", "socialtype": "discord" }]} />
-            <RoomCard RoomID="1" People={[{ "name": "Shaurya", "social": "discordusername", "socialtype": "discord" }, { "name": "Shauryaaaa", "social": "9958813899", "socialtype": "whatsapp" }, { "name": "Shauryaaaa", "social": "9958813899", "socialtype": "whatsapp" }, { "name": "Shauryaaaa", "social": "discordusername", "socialtype": "discord" }]} />
-
+            {Object.entries(loaded_data).map(([roomID, roomData]) => (
+              <RoomCard
+                key={roomID}
+                RoomID={roomID}
+                People={roomData.People.map(p => ({ name: p.Name, social: p.Social, socialtype: p.Socialtype }))}
+              />
+            ))}
           </div>
         </div>
       </div>
