@@ -13,14 +13,11 @@ import (
 	_ "github.com/lib/pq"
 )
 
-var ratelimit chan time.Time
-var curr_file string = "MAIN"
-var err any
-
 func main() {
 	godotenv.Load()
 	initfuncs.Logging()
 	initfuncs.Database()
+
 	defer globals.Globaldb.Close()
 
 	globals.Ticker = time.NewTicker(100 * time.Millisecond)
@@ -29,7 +26,6 @@ func main() {
 	go goroutines.Routine(globals.Ticker)
 	go goroutines.StartSessionCleanup(globals.Globaldb)
 
-	ratelimit = make(chan time.Time, 5)
 	http.HandleFunc("/registration", handlers.Ratelimit(handlers.RegistrationHandler))
 	http.HandleFunc("/rooms", handlers.Ratelimit(handlers.Rooms))
 	http.HandleFunc("/blocks", handlers.Ratelimit(handlers.Blocks))
