@@ -47,6 +47,7 @@ func RegistrationHandler(w http.ResponseWriter, req *http.Request) {
 	err := db.Insert(p, globals.Globaldb)
 
 	if err {
+
 		logrus.WithFields(logrus.Fields{
 			"package":  "handlers",
 			"endpoint": "/registration",
@@ -93,5 +94,6 @@ func RegistrationHandler(w http.ResponseWriter, req *http.Request) {
 		}).Info("assigned new session")
 
 		fmt.Fprintf(w, "done")
+
 	}
 }

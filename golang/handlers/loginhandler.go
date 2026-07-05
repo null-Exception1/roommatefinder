@@ -57,10 +57,10 @@ func Login(w http.ResponseWriter, req *http.Request) {
 	logrus.WithFields(logrus.Fields{
 		"package":  "handlers",
 		"endpoint": "/login",
-		"query":    str,
+		"results":  len(results),
 		"method":   req.Method,
 		"remote":   req.RemoteAddr,
-	}).Debug("fetch query ", str)
+	}).Debug("fetch query")
 
 	if len(results) == 1 {
 		token, _ := RandomToken(16)
