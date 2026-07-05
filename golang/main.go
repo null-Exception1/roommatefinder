@@ -1,35 +1,33 @@
 package main
 
 import (
-	"database/sql"
-	"fmt"
 	globals "golang/globals"
 	handlers "golang/handlers"
 	goroutines "golang/routine"
 	"net/http"
 	"time"
 
+	initfuncs "golang/init"
+
+	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 )
 
 var ratelimit chan time.Time
+var curr_file string = "MAIN"
+var err any
 
 func main() {
-	globals.Ticker = time.NewTicker(100 * time.Millisecond)
-	globals.RatelimitChannel = make(chan time.Time, 10)
-	connStr := "postgres://devuser:devpass@localhost:5432/roommatefinder?sslmode=disable"
-	go goroutines.Routine(globals.Ticker)
-	go goroutines.StartSessionCleanup(globals.Globaldb)
-	globals.Globaldb, _ = sql.Open("postgres", connStr)
+	godotenv.Load()
+	initfuncs.Logging()
+	initfuncs.Database()
 	defer globals.Globaldb.Close()
 
-	fmt.Println("Connected to Postgres!")
+	globals.Ticker = time.NewTicker(100 * time.Millisecond)
+	globals.RatelimitChannel = make(chan time.Time, 10)
 
-	/*
-		utils.Insert("12345", "fuck you", "hello", "hello", "012", 16, db)
-		db.Exec(`DELETE FROM people WHERE admn_hash='12345';`)
-		utils.Query("SELECT * FROM people;", db)
-	*/
+	go goroutines.Routine(globals.Ticker)
+	go goroutines.StartSessionCleanup(globals.Globaldb)
 
 	ratelimit = make(chan time.Time, 5)
 	http.HandleFunc("/registration", handlers.Ratelimit(handlers.RegistrationHandler))
@@ -37,6 +35,7 @@ func main() {
 	http.HandleFunc("/blocks", handlers.Ratelimit(handlers.Blocks))
 	http.HandleFunc("/login", handlers.Ratelimit(handlers.Login))
 	http.HandleFunc("/verify", handlers.Ratelimit(handlers.Verify))
+	http.HandleFunc("/logout", handlers.Ratelimit(handlers.Logout))
 
 	http.ListenAndServe("localhost:8080", nil)
 }

@@ -6,10 +6,18 @@ import (
 	"golang/globals"
 	"golang/structs"
 	"net/http"
+
+	"github.com/sirupsen/logrus"
 )
 
 func RegistrationHandler(w http.ResponseWriter, req *http.Request) {
-	fmt.Println("[REG HANDLER]")
+	logrus.WithFields(logrus.Fields{
+		"package":  "handlers",
+		"endpoint": "/registration",
+		"method":   req.Method,
+		"remote":   req.RemoteAddr,
+	}).Info("requested /registration")
+
 	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
 	w.Header().Set("Access-Control-Allow-Credentials", "true")
 
@@ -28,15 +36,43 @@ func RegistrationHandler(w http.ResponseWriter, req *http.Request) {
 	created_at := query.Get("created_at")
 
 	p := structs.Person{Admnno: admnno, Name: name, Social: social, Socialtype: socialtype, Roomno: roomno, Blockno: blockno, Created_at: created_at}
+
+	logrus.WithFields(logrus.Fields{
+		"package":  "handlers",
+		"endpoint": "/registration",
+		"method":   req.Method,
+		"remote":   req.RemoteAddr,
+	}).Debug("creating person struct")
+
 	err := db.Insert(p, globals.Globaldb)
+
 	if err {
+		logrus.WithFields(logrus.Fields{
+			"package":  "handlers",
+			"endpoint": "/registration",
+			"error":    err,
+			"method":   req.Method,
+			"remote":   req.RemoteAddr,
+		}).Error("error occured in inserting a new row")
+
 		fmt.Fprintf(w, "err")
 	} else {
 
-		token, _ := RandomToken(16)
+		token, err := RandomToken(16)
 
+		if err != nil {
+			logrus.WithError(err).Error("failed to generate session token")
+			http.Error(w, "internal error", http.StatusInternalServerError)
+			return
+		}
 		// flow for adding new session
-		globals.Globaldb.Exec("INSERT INTO sessions (id, admnno, expires_at) VALUES ($1, $2, NOW() + interval '1 day');", token, admnno)
+		_, err = globals.Globaldb.Exec("INSERT INTO sessions (id, admnno, expires_at) VALUES ($1, $2, NOW() + interval '1 day');", token, admnno)
+
+		if err != nil {
+			logrus.WithError(err).Error("failed to insert new session")
+			http.Error(w, "internal error", http.StatusInternalServerError)
+			return
+		}
 
 		http.SetCookie(w, &http.Cookie{
 			Name:     "sess_id",
@@ -46,6 +82,15 @@ func RegistrationHandler(w http.ResponseWriter, req *http.Request) {
 			Secure:   false, // true if HTTPS
 			SameSite: http.SameSiteLaxMode,
 		})
+
+		logrus.WithFields(logrus.Fields{
+			"package":  "handlers",
+			"endpoint": "/registration",
+			"status":   http.StatusOK,
+			"token":    token,
+			"method":   req.Method,
+			"remote":   req.RemoteAddr,
+		}).Info("assigned new session")
 
 		fmt.Fprintf(w, "done")
 	}

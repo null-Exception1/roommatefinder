@@ -7,6 +7,8 @@ import (
 	"golang/db"
 	"golang/globals"
 	"net/http"
+
+	"github.com/sirupsen/logrus"
 )
 
 func RandomToken(n int) (string, error) {
@@ -19,9 +21,16 @@ func RandomToken(n int) (string, error) {
 }
 
 func Login(w http.ResponseWriter, req *http.Request) {
+
+	logrus.WithFields(logrus.Fields{
+		"package":  "handlers",
+		"endpoint": "/login",
+		"method":   req.Method,
+		"remote":   req.RemoteAddr,
+	}).Info("requested /login by ", req.RemoteAddr)
+
 	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
 	w.Header().Set("Access-Control-Allow-Credentials", "true")
-
 	w.Header().Set("Access-Control-Allow-Methods", "GET, OPTIONS")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 	w.Header().Set("Content-Type", "application/text")
@@ -35,7 +44,23 @@ func Login(w http.ResponseWriter, req *http.Request) {
 	// check if it exist
 	str := "SELECT * FROM people WHERE admn_hash='" + q.Get("admn_hash") + "' AND name='" + q.Get("name") + "'"
 
+	logrus.WithFields(logrus.Fields{
+		"package":  "handlers",
+		"endpoint": "/login",
+		"query":    str,
+		"method":   req.Method,
+		"remote":   req.RemoteAddr,
+	}).Debug("building query ", str)
+
 	results := db.Query(str, globals.Globaldb)
+
+	logrus.WithFields(logrus.Fields{
+		"package":  "handlers",
+		"endpoint": "/login",
+		"query":    str,
+		"method":   req.Method,
+		"remote":   req.RemoteAddr,
+	}).Debug("fetch query ", str)
 
 	if len(results) == 1 {
 		token, _ := RandomToken(16)
@@ -48,15 +73,33 @@ func Login(w http.ResponseWriter, req *http.Request) {
 			Value:    token,
 			Path:     "/",
 			HttpOnly: true,
-			Secure:   true,                  // must be false on plain http://localhost
+			Secure:   true,                  // must be true on plain http://localhost
 			SameSite: http.SameSiteNoneMode, // <-- allow cross-port
 		})
 
-		//fmt.Println(token)
+		logrus.WithFields(logrus.Fields{
+			"package":  "handlers",
+			"endpoint": "/login",
+			"method":   req.Method,
+			"remote":   req.RemoteAddr,
+		}).Info("insert new session (login succeeded) ", token)
 
 		fmt.Fprintf(w, "%s", token)
 
 	} else {
+
+		logrus.WithFields(logrus.Fields{
+			"package":  "handlers",
+			"endpoint": "/login",
+			"method":   req.Method,
+			"remote":   req.RemoteAddr,
+		}).Warn("insert new session failed (login failed) ")
+
+		logrus.WithFields(logrus.Fields{
+			"endpoint": "/login",
+			"status":   http.StatusOK,
+			"user":     q.Get("name"),
+		}).Info("Response sent")
 		fmt.Fprintf(w, "not found")
 	}
 

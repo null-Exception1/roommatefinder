@@ -6,7 +6,5 @@ import (
 )
 
 var Globaldb *sql.DB
-
 var Ticker *time.Ticker
-
 var RatelimitChannel chan time.Time

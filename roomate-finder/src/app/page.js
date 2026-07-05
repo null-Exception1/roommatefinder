@@ -1,6 +1,17 @@
+"use client"
+import { useEffect, useState } from "react";
 import Navbar from "./components/navbar";
 
 export default function Home() {
+  const [valid, setValid] = useState(false);
+
+  useEffect(() => {
+    fetch("http://localhost:8080/verify", { credentials: "include" })
+      .then(res => res.text())
+      .then(data => setValid(data === "valid"))
+      .catch(() => setValid(false));
+  }, []);
+
   return (
     <div>
       <Navbar />
@@ -12,7 +23,12 @@ export default function Home() {
             <h1 className="text-5xl">Add yourself</h1>
             <h5 className="text-center text-2xl">alright bro what do you wanna do add yourself?</h5>
             <div className="justify-center card-actions">
-              <a className="btn btn-primary" href="/register">Register</a>
+              {valid ? (
+                <a className="btn btn-neutral" href="/">Register</a>
+              ) : (
+                <a className="btn btn-primary" href="/register">Register</a>
+              )
+              }
             </div>
           </div>
         </div>

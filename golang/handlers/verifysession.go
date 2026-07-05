@@ -6,6 +6,8 @@ import (
 	"golang/globals"
 	"net/http"
 	"time"
+
+	"github.com/sirupsen/logrus"
 )
 
 func Verify(w http.ResponseWriter, req *http.Request) {
@@ -23,6 +25,14 @@ func Verify(w http.ResponseWriter, req *http.Request) {
 
 	cookie, err := req.Cookie("sess_id")
 
+	logrus.WithFields(logrus.Fields{
+		"package":  "handlers",
+		"endpoint": "/verify",
+		"cookie":   cookie != nil,
+		"method":   req.Method,
+		"remote":   req.RemoteAddr,
+	}).Info("requested /verify by ", req.RemoteAddr)
+
 	fmt.Println(cookie)
 	if err != nil {
 		fmt.Fprint(w, "invalid")
@@ -33,14 +43,47 @@ func Verify(w http.ResponseWriter, req *http.Request) {
 	err = globals.Globaldb.QueryRow("SELECT expires_at FROM sessions WHERE id=$1", cookie.Value).
 		Scan(&expires)
 
+	logrus.WithFields(logrus.Fields{
+		"package":  "handlers",
+		"endpoint": "/verify",
+		"method":   req.Method,
+		"remote":   req.RemoteAddr,
+	}).Debug("checking session in db")
+
 	if err == sql.ErrNoRows {
+		logrus.WithFields(logrus.Fields{
+			"package":  "handlers",
+			"endpoint": "/verify",
+			"error":    err,
+			"token":    cookie,
+			"method":   req.Method,
+			"remote":   req.RemoteAddr,
+		}).Info("no valid session found")
+
 		fmt.Fprint(w, "invalid")
 		return
 	}
 	if time.Now().After(expires) {
+		logrus.WithFields(logrus.Fields{
+			"package":  "handlers",
+			"endpoint": "/verify",
+			"token":    cookie,
+			"method":   req.Method,
+			"remote":   req.RemoteAddr,
+		}).Info("expired token")
+
 		fmt.Fprint(w, "expired")
 	} else {
+		logrus.WithFields(logrus.Fields{
+			"package":  "handlers",
+			"endpoint": "/verify",
+			"token":    cookie,
+			"method":   req.Method,
+			"remote":   req.RemoteAddr,
+		}).Info("valid token")
+
 		fmt.Fprint(w, "valid")
+
 	}
 
 }

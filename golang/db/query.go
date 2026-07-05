@@ -3,10 +3,19 @@ package db
 import (
 	"database/sql"
 	"golang/structs"
+
+	"github.com/sirupsen/logrus"
 )
 
 func Query(query string, db *sql.DB) []structs.Person {
+
 	rows, _ := db.Query(query)
+
+	logrus.WithFields(logrus.Fields{
+		"package":  "db",
+		"function": "query",
+	}).Debug("fetch query recieved, making results..")
+
 	results := make([]structs.Person, 0)
 
 	for rows.Next() {
@@ -25,11 +34,20 @@ func Query(query string, db *sql.DB) []structs.Person {
 		results = append(results, p)
 
 		if err != nil {
-			panic(err)
+			logrus.WithFields(logrus.Fields{
+				"package":  "db",
+				"function": "query",
+				"error":    err,
+			}).Error("Error occured in query")
+
 		}
 
-		//fmt.Println(admnno, name, social, socialtype, roomno, blockno, created_at)
-
 	}
+	logrus.WithFields(logrus.Fields{
+		"package":  "db",
+		"function": "query",
+		"results":  len(results),
+	}).Debug("returning results from query...")
+
 	return results
 }

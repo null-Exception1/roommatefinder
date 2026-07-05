@@ -1,5 +1,6 @@
 "use client"
 import { useEffect, useState } from "react";
+
 export default function Navbar() {
   const [valid, setValid] = useState(false);
 
@@ -9,6 +10,12 @@ export default function Navbar() {
       .then(data => setValid(data === "valid"))
       .catch(() => setValid(false));
   }, []);
+
+  const handleLogout = () => {
+    fetch("http://localhost:8080/logout", { credentials: "include" })
+      .then(() => setValid(false))
+      .catch(() => setValid(false));
+  };
 
   return (
     <div className="z-10 fixed navbar border-2 bg-blue-700 border-b-blue-700 flex justify-between">
@@ -20,7 +27,10 @@ export default function Navbar() {
           </>
         )}
         {valid && (
-          <span className="text-white font-bold">Welcome back!</span>
+          <>
+            <span className="text-white font-bold">Welcome back!</span>
+            <button onClick={handleLogout} className="btn btn-error">Logout</button>
+          </>
         )}
       </div>
     </div>

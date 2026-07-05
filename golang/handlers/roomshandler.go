@@ -7,6 +7,8 @@ import (
 	"golang/globals"
 	"golang/structs"
 	"net/http"
+
+	"github.com/sirupsen/logrus"
 )
 
 func Rooms(w http.ResponseWriter, req *http.Request) {
@@ -19,12 +21,35 @@ func Rooms(w http.ResponseWriter, req *http.Request) {
 
 	blockno := q.Get("block")
 
+	logrus.WithFields(logrus.Fields{
+		"package":  "handlers",
+		"endpoint": "/rooms",
+		"block":    blockno,
+		"method":   req.Method,
+		"remote":   req.RemoteAddr,
+	}).Info("requested /rooms")
+
 	sqlquery := fmt.Sprintf("SELECT * FROM people WHERE blockno='%s';", blockno)
 
-	fmt.Println("hey", string(sqlquery))
+	logrus.WithFields(logrus.Fields{
+		"package":  "handlers",
+		"endpoint": "/rooms",
+		"query":    sqlquery,
+		"method":   req.Method,
+		"remote":   req.RemoteAddr,
+	}).Debug("sql query created")
+
 	rows := db.Query(string(sqlquery), globals.Globaldb)
-	fmt.Println("rows", rows)
+	logrus.WithFields(logrus.Fields{
+		"package":  "handlers",
+		"endpoint": "/rooms",
+		"rows":     len(rows),
+		"method":   req.Method,
+		"remote":   req.RemoteAddr,
+	}).Debug("query fetch happened")
+
 	rooms := make(map[string]*structs.Room, 0)
+
 	for _, row := range rows {
 		if _, ok := rooms[row.Roomno]; ok {
 			rooms[row.Roomno].People = append(rooms[row.Roomno].People, &structs.Person{Admnno: row.Admnno, Name: row.Name, Social: row.Social, Socialtype: row.Socialtype, Roomno: row.Roomno, Blockno: row.Blockno, Created_at: row.Created_at})
@@ -35,7 +60,23 @@ func Rooms(w http.ResponseWriter, req *http.Request) {
 		}
 	}
 
+	logrus.WithFields(logrus.Fields{
+		"package":  "handlers",
+		"endpoint": "/rooms",
+		"rooms":    len(rooms),
+		"method":   req.Method,
+		"remote":   req.RemoteAddr,
+	}).Debug("rooms is mapped")
+
 	str, _ := json.Marshal(rooms)
+
+	logrus.WithFields(logrus.Fields{
+		"package":  "handlers",
+		"endpoint": "/rooms",
+		"status":   http.StatusOK,
+		"method":   req.Method,
+		"remote":   req.RemoteAddr,
+	}).Info("response sent")
 
 	fmt.Fprintf(w, "%s", string(str))
 
