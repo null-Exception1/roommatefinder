@@ -5,11 +5,13 @@ import (
 	"golang/globals"
 	"os"
 
+	_ "github.com/lib/pq"
 	"github.com/sirupsen/logrus"
 )
 
 func Database() {
 	connStr := os.Getenv("DATABASE_URL")
+	//connStr = "postgres://devuser:devpass@localhost:5432/roommatefinder?sslmode=disable"
 	var err any
 	globals.Globaldb, err = sql.Open("postgres", connStr)
 
