@@ -1,4 +1,4 @@
-## Benchmark Results (Caching vs Non-Caching)
+## Benchmark results from different versions
 
 ### Environment
 - **OS**: Linux  
@@ -21,6 +21,13 @@
 |----------------------------|------------|--------------|------------|-----------|
 | **BlocksHandler**          | 28         | 54,649,916 ns | 17,629,019 | 459,798   |
 | **RoomsBlocksHandler**     | 1,000,000,000 | 0.02232 ns  | 0          | 0         |
+
+### Removed json.Marshal overhead
+
+| Benchmark                  | Iterations | Time/op      | Bytes/op | Allocs/op |
+|----------------------------|------------|--------------|----------|-----------|
+| **BlocksHandler**          | 3780       | 287,733 ns   | 208,379  | 1723      |
+| **RoomsBlocksHandler**     | 1,000,000,000 | 0.0006171 ns | 0        | 0         |
 
 ---
 
