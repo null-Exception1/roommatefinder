@@ -3,10 +3,10 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
-	"golang/db"
+	"golang/caching"
 	"golang/globals"
-	"golang/structs"
 	"net/http"
+	"time"
 
 	"github.com/sirupsen/logrus"
 )
@@ -26,56 +26,12 @@ func Blocks(w http.ResponseWriter, req *http.Request) {
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 	w.Header().Set("Content-Type", "application/text")
 
-	Occupancies := make(map[string]map[string]int, 0)
-	rows := db.Query("SELECT * FROM people", globals.Globaldb)
-
-	logrus.WithFields(logrus.Fields{
-		"package":  "handlers",
-		"endpoint": "/blocks",
-		"rows":     len(rows),
-		"method":   req.Method,
-		"remote":   req.RemoteAddr,
-	}).Info("fetched rows from postgres db")
-
-	for _, row := range rows {
-		if _, ok := Occupancies[row.Blockno]; ok {
-			Occupancies[row.Blockno][row.Roomno] = Occupancies[row.Blockno][row.Roomno] + 1
-		} else {
-			Occupancies[row.Blockno] = make(map[string]int, 0)
-			Occupancies[row.Blockno][row.Roomno] = 1
-		}
+	if time.Now().After(globals.CacheExpiry) {
+		caching.CacheUpdate()
 	}
-
-	logrus.WithFields(logrus.Fields{
-		"package":     "handlers",
-		"endpoint":    "/blocks",
-		"occupancies": len(Occupancies),
-		"method":      req.Method,
-		"remote":      req.RemoteAddr,
-	}).Debug("made occupancies map")
-
-	Block := make(map[string]*structs.Block, 0)
-
-	for key := range Occupancies {
-		Block[key] = &structs.Block{Partial: 0, Full: 0}
-		for _, occupancy := range Occupancies[key] {
-			if occupancy >= 2 { // remind me to check the occupancy max limit later
-				Block[key].Full = Block[key].Full + 1
-			} else {
-				Block[key].Partial = Block[key].Partial + 1
-			}
-		}
-	}
-
-	logrus.WithFields(logrus.Fields{
-		"package":  "handlers",
-		"endpoint": "/blocks",
-		"blocks":   len(Block),
-		"method":   req.Method,
-		"remote":   req.RemoteAddr,
-	}).Debug("made blocks map")
-
-	str, err := json.Marshal(Block)
+	globals.CacheMutex.RLock()
+	str, err := json.Marshal(globals.CacheBlocks)
+	globals.CacheMutex.RUnlock()
 
 	if err != nil {
 		logrus.WithFields(logrus.Fields{
