@@ -1,6 +1,6 @@
 ## Baseline Benchmarks
 
-These results represent the raw performance of our Go handlers hitting Postgres directly, **without caching**.
+These results represent the raw performance of my Go handlers hitting Postgres directly, **without caching**.
 
 ### Environment
 - **OS:** Linux (amd64)
