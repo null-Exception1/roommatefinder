@@ -23,7 +23,8 @@ func main() {
 	globals.Ticker = time.NewTicker(100 * time.Millisecond)
 	globals.RatelimitChannel = make(chan time.Time, 1000)
 
-	go goroutines.CacheCleanup()
+	go goroutines.CacheBlocksCleanup()
+	go goroutines.CacheRoomsCleanup()
 	go goroutines.Routine(globals.Ticker)
 	go goroutines.StartSessionCleanup(globals.Globaldb)
 

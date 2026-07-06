@@ -3,10 +3,11 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
-	"golang/db"
+	"golang/caching"
 	"golang/globals"
-	"golang/structs"
 	"net/http"
+	"os"
+	"time"
 
 	"github.com/sirupsen/logrus"
 )
@@ -29,46 +30,20 @@ func Rooms(w http.ResponseWriter, req *http.Request) {
 		"remote":   req.RemoteAddr,
 	}).Info("requested /rooms")
 
-	sqlquery := fmt.Sprintf("SELECT * FROM people WHERE blockno='%s';", blockno)
-
-	logrus.WithFields(logrus.Fields{
-		"package":  "handlers",
-		"endpoint": "/rooms",
-		"query":    sqlquery,
-		"method":   req.Method,
-		"remote":   req.RemoteAddr,
-	}).Debug("sql query created")
-
-	rows := db.Query(string(sqlquery), globals.Globaldb)
-	logrus.WithFields(logrus.Fields{
-		"package":  "handlers",
-		"endpoint": "/rooms",
-		"rows":     len(rows),
-		"method":   req.Method,
-		"remote":   req.RemoteAddr,
-	}).Debug("query fetch happened")
-
-	rooms := make(map[string]*structs.Room, 0)
-
-	for _, row := range rows {
-		if _, ok := rooms[row.Roomno]; ok {
-			rooms[row.Roomno].People = append(rooms[row.Roomno].People, &structs.Person{Admnno: row.Admnno, Name: row.Name, Social: row.Social, Socialtype: row.Socialtype, Roomno: row.Roomno, Blockno: row.Blockno, Created_at: row.Created_at})
+	if os.Getenv("CACHING") == "true" {
+		if time.Now().After(globals.CacheBlocksExpiry[blockno]) {
+			caching.CacheRoomsUpdate(blockno)
+			globals.CacheMisses++
 		} else {
-			rooms[row.Roomno] = &structs.Room{People: make([]*structs.Person, 0)}
-			rooms[row.Roomno].People = append(rooms[row.Roomno].People, &structs.Person{Admnno: row.Admnno, Name: row.Name, Social: row.Social, Socialtype: row.Socialtype, Roomno: row.Roomno, Blockno: row.Blockno, Created_at: row.Created_at})
-
+			logrus.Debug("CACHE HIT!") // moment when the cache hits lol
+			globals.CacheHits++
 		}
+	} else {
+		caching.CacheRoomsUpdate(blockno) // do a normal update instead of holding off (no different from cache miss)
 	}
-
-	logrus.WithFields(logrus.Fields{
-		"package":  "handlers",
-		"endpoint": "/rooms",
-		"rooms":    len(rooms),
-		"method":   req.Method,
-		"remote":   req.RemoteAddr,
-	}).Debug("rooms is mapped")
-
-	str, _ := json.Marshal(rooms)
+	globals.CacheRoomsMutex.RLock()
+	str, _ := json.Marshal(globals.CacheRooms[blockno])
+	globals.CacheRoomsMutex.RUnlock()
 
 	logrus.WithFields(logrus.Fields{
 		"package":  "handlers",

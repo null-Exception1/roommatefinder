@@ -9,7 +9,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func CacheUpdate() {
+func CacheBlocksUpdate() {
 
 	Occupancies := make(map[string]map[string]int, 0)
 	rows := db.Query("SELECT * FROM people", globals.Globaldb)
