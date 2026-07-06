@@ -8,7 +8,7 @@ These results represent the raw performance of our Go handlers hitting Postgres 
 - **Go Version:** go1.22+
 - **Database:** Postgres (Docker, seeded with ~1000 rows)
 
-### Results
+### Results (No cacheing)
 
 | Benchmark                  | Iterations | Time per op (ns/op) | Memory (B/op) | Allocations/op |
 |----------------------------|------------|---------------------|---------------|----------------|
