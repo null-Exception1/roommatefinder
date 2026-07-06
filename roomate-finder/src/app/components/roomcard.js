@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 
 export default function RoomCard({ RoomID, People }) {
   //const { people } = People;
@@ -59,6 +60,7 @@ export default function RoomCard({ RoomID, People }) {
           ))}
         </div>
       </div>
+
     </div>
 
   );
