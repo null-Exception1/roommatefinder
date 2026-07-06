@@ -1,17 +1,29 @@
-## Baseline Benchmarks
-
-These results represent the raw performance of my Go handlers hitting Postgres directly, **without caching**.
-
 ### Environment
-- **OS:** Linux (amd64)
-- **CPU:** Intel(R) Core(TM) i7-9750H @ 2.60GHz
-- **Go Version:** go1.22+
-- **Database:** Postgres (Docker, seeded with ~1000 rows)
+- **OS**: Linux  
+- **Arch**: amd64  
+- **CPU**: Intel(R) Core(TM) i7-9750H @ 2.60GHz  
+- **Go pkg**: `golang/benchmarks/simplefetch`
 
-### Results (No caching)
+---
 
-| Benchmark                  | Iterations | Time per op (ns/op) | Memory (B/op) | Allocations/op |
-|----------------------------|------------|---------------------|---------------|----------------|
-| `BenchmarkBlocksHandler`   | 450        | 2,549,874           | 840,851       | 21,949         |
-| `BenchmarkRoomsBlocksHandler` | 1,000,000,000 | 0.02023            | 0             | 0              |
+### Without Caching
+| Benchmark                  | Iterations | Time/op      | Bytes/op | Allocs/op |
+|----------------------------|------------|--------------|----------|-----------|
+| **BlocksHandler**          | 3013       | 389,557 ns   | 258,563  | 2207      |
+| **RoomsBlocksHandler**     | 1,000,000,000 | 0.001113 ns | 0        | 0         |
 
+---
+
+### With Caching
+| Benchmark                  | Iterations | Time/op      | Bytes/op   | Allocs/op |
+|----------------------------|------------|--------------|------------|-----------|
+| **BlocksHandler**          | 30         | 40,127,427 ns | 17,628,630 | 459,797   |
+| **RoomsBlocksHandler**     | 1,000,000,000 | 0.01648 ns  | 0          | 0         |
+
+---
+
+---
+
+### Next Steps
+- optimizing set updates by giving worker pools to golang using a fan in/fan out implementation maybe 
+- really work to death on fan in/fan out implementation
