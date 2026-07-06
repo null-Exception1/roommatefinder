@@ -1,6 +1,7 @@
 package init
 
 import (
+	"io"
 	"os"
 
 	"github.com/sirupsen/logrus"
@@ -21,6 +22,7 @@ func Logging() {
 	}
 
 	level := os.Getenv("LOG_LEVEL")
+
 	switch level {
 	case "debug":
 		log.SetLevel(log.DebugLevel)
@@ -28,6 +30,8 @@ func Logging() {
 		log.SetLevel(log.WarnLevel)
 	case "error":
 		log.SetLevel(log.ErrorLevel)
+	case "none":
+		log.SetOutput(io.Discard)
 	default:
 		log.SetLevel(log.InfoLevel)
 	}

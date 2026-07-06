@@ -6,6 +6,7 @@ import (
 	"golang/caching"
 	"golang/globals"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/sirupsen/logrus"
@@ -26,8 +27,17 @@ func Blocks(w http.ResponseWriter, req *http.Request) {
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 	w.Header().Set("Content-Type", "application/text")
 
-	if time.Now().After(globals.CacheExpiry) {
-		caching.CacheUpdate()
+	if os.Getenv("CACHING") == "true" {
+		if time.Now().After(globals.CacheExpiry) {
+			caching.CacheBlocksUpdate()
+			globals.CacheMisses++
+			logrus.Debug("CACHE MISS!")
+		} else {
+			logrus.Debug("CACHE HIT!") // moment when the cache hits lol
+			globals.CacheHits++
+		}
+	} else {
+		caching.CacheBlocksUpdate() // do a normal update instead of holding off (no different from cache miss)
 	}
 	globals.CacheMutex.RLock()
 	str, err := json.Marshal(globals.CacheBlocks)

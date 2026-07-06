@@ -8,12 +8,15 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func CacheCleanup() {
+func CacheRoomsCleanup() {
 	ticker := time.NewTicker(5 * time.Minute)
 	for range ticker.C {
 		if time.Now().After(globals.CacheExpiry) {
-			logrus.Info("cache cleaning started")
-			caching.CacheUpdate()
+			logrus.Info("cache rooms cleaning started")
+			for block := range globals.CacheRooms {
+				caching.CacheRoomsUpdate(block)
+			}
+			logrus.Info("cache rooms cleaning ended")
 		}
 	}
 }

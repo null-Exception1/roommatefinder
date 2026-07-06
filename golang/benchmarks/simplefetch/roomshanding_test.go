@@ -13,6 +13,7 @@ import (
 func BenchmarkRoomsBlocksHandler(t *testing.B) {
 
 	godotenv.Load("../../.testenv")
+	initfuncs.Logging()
 	initfuncs.Database()
 
 	for i := 0; i <= 20; i++ {
@@ -30,4 +31,8 @@ func BenchmarkRoomsBlocksHandler(t *testing.B) {
 			t.Fatal("Failed")
 		}
 	}
+	/*
+		fmt.Println("CACHE HITS: ", globals.CacheHits)
+		fmt.Println("CACHE MISSES: ", globals.CacheMisses)
+	*/
 }
