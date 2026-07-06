@@ -3,6 +3,7 @@ package simplefetch
 import (
 	"golang/handlers"
 	initfuncs "golang/init"
+	"net/http"
 	"net/http/httptest"
 	"testing"
 
@@ -11,20 +12,22 @@ import (
 
 func BenchmarkBlocksHandler(t *testing.B) {
 
-	godotenv.Load("../../.env")
+	godotenv.Load("../../.testenv")
 
 	initfuncs.Database()
+	var w *httptest.ResponseRecorder
+	var req *http.Request
+	for i := 0; i <= t.N; i++ {
+		req = httptest.NewRequest("GET", "/rooms?block=16", nil)
 
-	req := httptest.NewRequest("GET", "/rooms?block=16", nil)
+		w = httptest.NewRecorder()
 
-	w := httptest.NewRecorder()
+		handlers.Blocks(w, req)
 
-	handlers.Blocks(w, req)
+		result := w.Result()
+		if result.Status != "200 OK" {
+			t.Fatal("Failed")
+		}
 
-	var resp string
-	resp = w.Body.String()
-
-	if resp == "" {
-		t.Fatal("Failed")
 	}
 }

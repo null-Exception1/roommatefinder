@@ -4,6 +4,7 @@ import (
 	"golang/handlers"
 	initfuncs "golang/init"
 	"net/http/httptest"
+	"strconv"
 	"testing"
 
 	"github.com/joho/godotenv"
@@ -11,20 +12,22 @@ import (
 
 func BenchmarkRoomsBlocksHandler(t *testing.B) {
 
-	godotenv.Load("../../.env")
-
+	godotenv.Load("../../.testenv")
 	initfuncs.Database()
 
-	req := httptest.NewRequest("GET", "/rooms?block=16", nil)
+	for i := 0; i <= 20; i++ {
 
-	w := httptest.NewRecorder()
+		req := httptest.NewRequest("GET", "/rooms?block="+strconv.Itoa(i), nil)
 
-	handlers.Blocks(w, req)
+		w := httptest.NewRecorder()
 
-	var resp string
-	resp = w.Body.String()
+		handlers.Rooms(w, req)
 
-	if resp == "" {
-		t.Fatal("Failed")
+		var resp string
+		resp = w.Body.String()
+
+		if resp == "" {
+			t.Fatal("Failed")
+		}
 	}
 }
