@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"encoding/json"
 	"fmt"
 	"golang/caching"
 	"golang/globals"
@@ -39,28 +38,15 @@ func Blocks(w http.ResponseWriter, req *http.Request) {
 	} else {
 		caching.CacheBlocksUpdate() // do a normal update instead of holding off (no different from cache miss)
 	}
-	globals.CacheMutex.RLock()
-	str, err := json.Marshal(globals.CacheBlocks)
-	globals.CacheMutex.RUnlock()
-
-	if err != nil {
-		logrus.WithFields(logrus.Fields{
-			"package":   "handlers",
-			"endpoint":  "/blocks",
-			"jsonified": len(str),
-			"method":    req.Method,
-			"remote":    req.RemoteAddr,
-		}).Error("error in JSON.Marshal")
-	}
 
 	logrus.WithFields(logrus.Fields{
 		"package":   "handlers",
 		"endpoint":  "/blocks",
-		"jsonified": len(str),
+		"jsonified": len(globals.CachedBlocksJSON),
 		"status":    http.StatusOK,
 		"method":    req.Method,
 		"remote":    req.RemoteAddr,
 	}).Info("response sent")
 
-	fmt.Fprintf(w, "%s", string(str))
+	fmt.Fprintf(w, "%s", globals.CachedBlocksJSON)
 }

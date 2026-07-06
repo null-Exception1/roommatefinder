@@ -1,6 +1,7 @@
 package caching
 
 import (
+	"encoding/json"
 	"golang/db"
 	"golang/globals"
 	"golang/structs"
@@ -60,10 +61,17 @@ func CacheBlocksUpdate() {
 	}).Debug("updating the cache..")
 
 	globals.CacheMutex.Lock()
-	clear(globals.CacheBlocks) // clear cache
-	globals.CacheBlocks = Block
-	globals.CacheExpiry = time.Now().Add(30 * time.Second)
+	bytes, err := json.Marshal(Block)
+	globals.CachedBlocksJSON = string(bytes)
 	globals.CacheMutex.Unlock()
+
+	if err != nil {
+		logrus.WithFields(logrus.Fields{
+			"package": "cacheupdateblocks",
+			"err":     err,
+		}).Error("error in JSON.Marshal")
+	}
+	globals.CacheExpiry = time.Now().Add(30 * time.Second)
 
 	logrus.WithFields(logrus.Fields{
 		"package": "caching",

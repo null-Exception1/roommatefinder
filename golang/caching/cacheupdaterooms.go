@@ -1,6 +1,7 @@
 package caching
 
 import (
+	"encoding/json"
 	"fmt"
 	"golang/db"
 	"golang/globals"
@@ -44,7 +45,8 @@ func CacheRoomsUpdate(blockno string) {
 	}).Debug("rooms is mapped")
 
 	globals.CacheRoomsMutex.Lock()
-	globals.CacheRooms[blockno] = rooms
+	bytes, _ := json.Marshal(rooms)
+	globals.CachedRoomsJSON[blockno] = string(bytes)
 	globals.CacheBlocksExpiry[blockno] = time.Now().Add(30 * time.Second)
 	globals.CacheRoomsMutex.Unlock()
 

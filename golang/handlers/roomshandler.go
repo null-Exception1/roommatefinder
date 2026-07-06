@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"encoding/json"
 	"fmt"
 	"golang/caching"
 	"golang/globals"
@@ -41,18 +40,16 @@ func Rooms(w http.ResponseWriter, req *http.Request) {
 	} else {
 		caching.CacheRoomsUpdate(blockno) // do a normal update instead of holding off (no different from cache miss)
 	}
-	globals.CacheRoomsMutex.RLock()
-	str, _ := json.Marshal(globals.CacheRooms[blockno])
-	globals.CacheRoomsMutex.RUnlock()
 
 	logrus.WithFields(logrus.Fields{
 		"package":  "handlers",
 		"endpoint": "/rooms",
+		"rooms":    len(globals.CachedRoomsJSON[blockno]),
 		"status":   http.StatusOK,
 		"method":   req.Method,
 		"remote":   req.RemoteAddr,
 	}).Info("response sent")
 
-	fmt.Fprintf(w, "%s", string(str))
+	fmt.Fprintf(w, "%s", globals.CacheBlocksExpiry[blockno])
 
 }
