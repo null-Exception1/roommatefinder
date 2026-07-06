@@ -29,7 +29,7 @@
 | Benchmark                  | Iterations | Time/op      | Bytes/op | Allocs/op |
 |----------------------------|------------|--------------|----------|-----------|
 | **BlocksHandler**          | 3780       | 287,733 ns   | 208,379  | 1723      |
-| **RoomsBlocksHandler**     | 1,000,000,000 | 0.0006171 ns | 0        | 0         |
+| **RoomsBlocksHandler**     | 1,000,000,000 | 0.0003799 ns | 0        | 0         |
 
 ---
 # next up
