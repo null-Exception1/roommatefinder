@@ -24,7 +24,7 @@
 
 ---
 
-### Removed json.Marshal overhead
+### Removed json.Marshal overhead (caching)
 
 | Benchmark                  | Iterations | Time/op      | Bytes/op | Allocs/op |
 |----------------------------|------------|--------------|----------|-----------|
