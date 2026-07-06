@@ -9,7 +9,7 @@ import (
 )
 
 func CacheRoomsCleanup() {
-	ticker := time.NewTicker(5 * time.Minute)
+	ticker := time.NewTicker(globals.CacheRoomsRoutine * time.Minute)
 	for range ticker.C {
 		if time.Now().After(globals.CacheExpiry) {
 			logrus.Info("cache rooms cleaning started")

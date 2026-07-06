@@ -50,6 +50,6 @@ func Rooms(w http.ResponseWriter, req *http.Request) {
 		"remote":   req.RemoteAddr,
 	}).Info("response sent")
 
-	fmt.Fprintf(w, "%s", globals.CacheBlocksExpiry[blockno])
+	fmt.Fprintf(w, "%s", globals.CachedRoomsJSON[blockno])
 
 }

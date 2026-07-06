@@ -28,3 +28,9 @@ var CacheRoomsMutex sync.RWMutex
 // Analytics
 var CacheHits int = 0
 var CacheMisses int = 0
+
+// Editables
+const CacheBlocksSeconds = 60
+const CacheRoomsSeconds = 60
+const CacheBlocksRoutine = 30
+const CacheRoomsRoutine = 30

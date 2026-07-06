@@ -71,7 +71,7 @@ func CacheBlocksUpdate() {
 			"err":     err,
 		}).Error("error in JSON.Marshal")
 	}
-	globals.CacheExpiry = time.Now().Add(30 * time.Second)
+	globals.CacheExpiry = time.Now().Add(globals.CacheBlocksSeconds * time.Second)
 
 	logrus.WithFields(logrus.Fields{
 		"package": "caching",

@@ -4,7 +4,8 @@ export default function RoomCard({ RoomID, People }) {
   const badgeColors = {
     Instagram: "badge badge-dash badge-secondary",   // pink vibe
     Discord: "badge badge-dash badge-primary",   // discord purple
-    Whatsapp: "badge badge-dash badge-accent",   // whatsapp green
+    Whatsapp: "badge badge-dash badge-accent",  // whatsapp green
+    Twitter: "badge badge-dash badge-accent",
   };
   const icons = {
     Instagram: (
@@ -26,11 +27,18 @@ export default function RoomCard({ RoomID, People }) {
         <path d="M16 3C9.4 3 4 8.4 4 15c0 2.6.8 5 2.2 7L4 29l7-2.2c2 1.4 4.4 2.2 7 2.2 6.6 0 12-5.4 12-12S22.6 3 16 3zm0 22c-2.2 0-4.3-.7-6-2l-.4-.3-4.2 1.3 1.4-4.1-.3-.4c-1.3-1.7-2-3.8-2-6 0-5.5 4.5-10 10-10s10 4.5 10 10-4.5 10-10 10z" />
         <path d="M21.6 18.4c-.3-.2-1.7-.9-2-1-.3-.1-.5-.2-.7.2-.2.3-.8 1-.9 1.2-.2.2-.3.3-.6.1-.3-.2-1.3-.5-2.5-1.6-.9-.8-1.6-1.8-1.8-2.1-.2-.3 0-.5.1-.7.1-.1.3-.3.4-.5.1-.2.2-.3.3-.5.1-.2.1-.4 0-.6-.1-.2-.7-1.7-1-2.3-.3-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.7.3-.2.2-.9.9-.9 2.2s.9 2.6 1 2.8c.1.2 1.8 2.7 4.4 3.8.6.3 1.1.5 1.5.6.6.2 1.1.2 1.5.1.5-.1 1.7-.7 2-1.3.3-.6.3-1.1.2-1.3-.1-.2-.3-.3-.6-.5z" />
       </svg>
+    ),
+    Twitter: (
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"
+        fill="currentColor" className="w-4 h-4 mr-1">
+        <path d="M16 3C9.4 3 4 8.4 4 15c0 2.6.8 5 2.2 7L4 29l7-2.2c2 1.4 4.4 2.2 7 2.2 6.6 0 12-5.4 12-12S22.6 3 16 3zm0 22c-2.2 0-4.3-.7-6-2l-.4-.3-4.2 1.3 1.4-4.1-.3-.4c-1.3-1.7-2-3.8-2-6 0-5.5 4.5-10 10-10s10 4.5 10 10-4.5 10-10 10z" />
+        <path d="M21.6 18.4c-.3-.2-1.7-.9-2-1-.3-.1-.5-.2-.7.2-.2.3-.8 1-.9 1.2-.2.2-.3.3-.6.1-.3-.2-1.3-.5-2.5-1.6-.9-.8-1.6-1.8-1.8-2.1-.2-.3 0-.5.1-.7.1-.1.3-.3.4-.5.1-.2.2-.3.3-.5.1-.2.1-.4 0-.6-.1-.2-.7-1.7-1-2.3-.3-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.7.3-.2.2-.9.9-.9 2.2s.9 2.6 1 2.8c.1.2 1.8 2.7 4.4 3.8.6.3 1.1.5 1.5.6.6.2 1.1.2 1.5.1.5-.1 1.7-.7 2-1.3.3-.6.3-1.1.2-1.3-.1-.2-.3-.3-.6-.5z" />
+      </svg>
     )
   };
 
   return (
-    <div className="card w-80 bg-white shadow-md hover:shadow-xl m-6 border border-black overflow-x-hidden">
+    <div className="card w-90 bg-white shadow-md hover:shadow-xl m-6 border border-black overflow-x-hidden">
       <div className="card-body flex flex-col items-center text-center">
         <h2 className="card-title mb-4">ROOM {RoomID}</h2>
         <div className="grid grid-rows-4 gap-3 text-sm w-full">

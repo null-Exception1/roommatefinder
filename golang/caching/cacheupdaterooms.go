@@ -47,7 +47,7 @@ func CacheRoomsUpdate(blockno string) {
 	globals.CacheRoomsMutex.Lock()
 	bytes, _ := json.Marshal(rooms)
 	globals.CachedRoomsJSON[blockno] = string(bytes)
-	globals.CacheBlocksExpiry[blockno] = time.Now().Add(30 * time.Second)
+	globals.CacheBlocksExpiry[blockno] = time.Now().Add(globals.CacheRoomsSeconds * time.Second)
 	globals.CacheRoomsMutex.Unlock()
 
 	logrus.WithFields(logrus.Fields{
