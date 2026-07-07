@@ -42,6 +42,7 @@ func main() {
 	http.HandleFunc("/login", handlers.Ratelimit(handlers.Login))
 	http.HandleFunc("/verify", handlers.Ratelimit(handlers.Verify))
 	http.HandleFunc("/logout", handlers.Ratelimit(handlers.Logout))
+	http.HandleFunc("/delete", handlers.Ratelimit(handlers.DeleteHandler))
 
 	http.ListenAndServe("localhost:8080", nil)
 }
