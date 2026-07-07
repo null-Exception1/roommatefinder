@@ -12,7 +12,7 @@ import (
 )
 
 func TestLogoutHandler(t *testing.T) {
-	godotenv.Load("../../.env")
+	godotenv.Load("../../.testenv")
 
 	initfuncs.Database()
 	_, err := globals.Globaldb.Exec(`

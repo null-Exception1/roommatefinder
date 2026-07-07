@@ -2,3 +2,4 @@ DATABASE_URL=postgres://devuser:devpass@localhost:5432/test_db?sslmode=disable
 LOG_FORMAT=text
 LOG_LEVEL=none
 CACHING=true
+PEPPER=test_pepper
