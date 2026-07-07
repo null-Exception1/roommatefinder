@@ -11,7 +11,10 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func CacheRoomsUpdate(blockno string) {
+func AddCacheRoomsJob(blockno string) {
+	globals.CacheRoomsJobs <- structs.RoomsJob{Blockno: blockno}
+}
+func FormRooms(blockno string) *map[string]*structs.Room {
 
 	sqlquery := fmt.Sprintf("SELECT * FROM people WHERE blockno='%s';", blockno)
 
@@ -44,11 +47,16 @@ func CacheRoomsUpdate(blockno string) {
 		"rooms":    len(rooms),
 	}).Debug("rooms is mapped")
 
-	globals.CacheRoomsMutex.Lock()
+	return &rooms
+}
+func CacheRoomsUpdate(blockno string) {
+	rooms := FormRooms(blockno)
+
 	bytes, _ := json.Marshal(rooms)
-	globals.CachedRoomsJSON[blockno] = string(bytes)
-	globals.CacheBlocksExpiry[blockno] = time.Now().Add(globals.CacheRoomsSeconds * time.Second)
-	globals.CacheRoomsMutex.Unlock()
+
+	globals.CacheRoomsJobsResults <- structs.RoomsJobResult{Blockno: blockno, JSON: string(bytes)}
+
+	globals.CacheBlocksExpiry.Store(blockno, time.Now().Add(globals.CacheRoomsSeconds*time.Second))
 
 	logrus.WithFields(logrus.Fields{
 		"package":  "handlers",
@@ -56,5 +64,4 @@ func CacheRoomsUpdate(blockno string) {
 		"block":    blockno,
 	}).Debug("updated block cache")
 
-	//fmt.Println(globals.CacheRooms[blockno])
 }

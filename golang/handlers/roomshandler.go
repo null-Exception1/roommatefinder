@@ -30,26 +30,47 @@ func Rooms(w http.ResponseWriter, req *http.Request) {
 	}).Info("requested /rooms")
 
 	if os.Getenv("CACHING") == "true" {
-		if time.Now().After(globals.CacheBlocksExpiry[blockno]) {
-			caching.CacheRoomsUpdate(blockno)
-			globals.CacheMisses++
-		} else {
-			logrus.Debug("CACHE HIT!") // moment when the cache hits lol
-			globals.CacheHits++
+		if val, ok := globals.CacheBlocksExpiry.Load(blockno); ok {
+			expiry := val.(time.Time) // type assertion
+			if time.Now().After(expiry) {
+				logrus.Debug("CACHE MISS!")
+				caching.AddCacheRoomsJob(blockno)
+				globals.CacheMisses.Add(1)
+			} else {
+				logrus.Debug("CACHE HIT!") // moment when the cache hits lol
+				globals.CacheHits.Add(1)
+			}
+		} else { // edge case where we don't even have the key in cache
+			logrus.Debug("CACHE MISS!")
+			caching.AddCacheRoomsJob(blockno)
+			globals.CacheMisses.Add(1)
 		}
+
 	} else {
-		caching.CacheRoomsUpdate(blockno) // do a normal update instead of holding off (no different from cache miss)
+		caching.AddCacheRoomsJob(blockno) // do a normal update instead of holding off (no different from cache miss)
 	}
 
 	logrus.WithFields(logrus.Fields{
 		"package":  "handlers",
 		"endpoint": "/rooms",
-		"rooms":    len(globals.CachedRoomsJSON[blockno]),
 		"status":   http.StatusOK,
 		"method":   req.Method,
 		"remote":   req.RemoteAddr,
 	}).Info("response sent")
 
-	fmt.Fprintf(w, "%s", globals.CachedRoomsJSON[blockno])
+	json, ok := globals.CachedRoomsJSON.Load(blockno)
 
+	if !ok {
+		json = "{}" // no cache built yet (worse case scenario, this only happens on startup ig)
+	}
+
+	logrus.WithFields(logrus.Fields{
+		"package":  "handlers",
+		"endpoint": "/rooms",
+		"status":   http.StatusOK,
+		"method":   req.Method,
+		"remote":   req.RemoteAddr,
+	}).Debug("fetched cache")
+
+	fmt.Fprintf(w, "%s", json)
 }

@@ -18,6 +18,7 @@ func BenchmarkBlocksHandler(t *testing.B) {
 	initfuncs.Logging()
 	initfuncs.Database()
 
+	t.ResetTimer()
 	var w *httptest.ResponseRecorder
 	var req *http.Request
 	for j := 0; j < t.N; j++ {

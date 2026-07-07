@@ -29,11 +29,11 @@ func Blocks(w http.ResponseWriter, req *http.Request) {
 	if os.Getenv("CACHING") == "true" {
 		if time.Now().After(globals.CacheExpiry) {
 			caching.CacheBlocksUpdate()
-			globals.CacheMisses++
+			globals.CacheMisses.Add(1)
 			logrus.Debug("CACHE MISS!")
 		} else {
 			logrus.Debug("CACHE HIT!") // moment when the cache hits lol
-			globals.CacheHits++
+			globals.CacheHits.Add(1)
 		}
 	} else {
 		caching.CacheBlocksUpdate() // do a normal update instead of holding off (no different from cache miss)
