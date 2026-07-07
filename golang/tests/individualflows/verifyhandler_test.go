@@ -12,13 +12,11 @@ import (
 )
 
 func TestVerifyHandler(t *testing.T) {
-	// Load env + init DB
 	if err := godotenv.Load("../../.env"); err != nil {
 		t.Fatalf("failed to load .env: %v", err)
 	}
 	initfuncs.Database()
 
-	// Seed DB with a fake session
 	fakeToken := "a18fbd57f9bbfd0450659cb69333415f"
 	_, err := globals.Globaldb.Exec(`
         INSERT INTO sessions (id, admnno, expires_at)
@@ -28,7 +26,6 @@ func TestVerifyHandler(t *testing.T) {
 		t.Fatalf("failed to insert session: %v", err)
 	}
 
-	// Make request with cookie
 	req := httptest.NewRequest("GET", "/verify", nil)
 	req.AddCookie(&http.Cookie{Name: "sess_id", Value: fakeToken})
 	w := httptest.NewRecorder()
@@ -43,7 +40,6 @@ func TestVerifyHandler(t *testing.T) {
 		t.Errorf("expected 'valid', got %q", w.Body.String())
 	}
 
-	// Cleanup
 	if _, err := globals.Globaldb.Exec("DELETE FROM sessions WHERE admnno=$1", "69"); err != nil {
 		t.Logf("cleanup failed: %v", err)
 	}

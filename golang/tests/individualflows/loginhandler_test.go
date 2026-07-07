@@ -13,15 +13,12 @@ import (
 )
 
 func TestLoginHandler(t *testing.T) {
-	// Load env and init DB
 	_ = godotenv.Load("../../.env")
 	initfuncs.Database()
 
-	// Compute the peppered hash exactly as the handler does
 	frontendHash := "69" // what the client would send
 	peppered := globals.SecureHash(frontendHash, os.Getenv("PEPPER"))
 
-	// Seed DB with a matching user
 	_, err := globals.Globaldb.Exec(`
         INSERT INTO people (admn_hash, name, social, socialtype, roomno, blockno)
         VALUES ($1, $2, $3, $4, $5, $6)
@@ -31,7 +28,6 @@ func TestLoginHandler(t *testing.T) {
 		t.Fatalf("insert failed: %v", err)
 	}
 
-	// Simulate login request with the *frontend* hash
 	req := httptest.NewRequest("GET", "/login?admn_hash="+frontendHash+"&name=Shaurya", nil)
 	w := httptest.NewRecorder()
 
@@ -45,7 +41,6 @@ func TestLoginHandler(t *testing.T) {
 		t.Errorf("expected token, got %q", w.Body.String())
 	}
 
-	// Cleanup using the peppered hash
 	_, _ = globals.Globaldb.Exec("DELETE FROM people WHERE admn_hash=$1", peppered)
 	_, _ = globals.Globaldb.Exec("DELETE FROM sessions WHERE admnno=$1", peppered)
 }

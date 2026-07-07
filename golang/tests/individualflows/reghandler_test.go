@@ -18,7 +18,6 @@ func TestRegistrationHandler(t *testing.T) {
 	}
 	initfuncs.Database()
 
-	// frontend sends raw "69", handler peppers it internally
 	req := httptest.NewRequest("GET",
 		"/registration?admn_hash=69&name=Shaurya&social=discordusername&socialtype=Discord&blockno=16&roomno=123&created_at=now",
 		nil)
@@ -39,7 +38,6 @@ func TestRegistrationHandler(t *testing.T) {
 		t.Fatal("expected a cookie, got none")
 	}
 
-	// cleanup: compute peppered hash same way handler does
 	peppered := globals.SecureHash("69", os.Getenv("PEPPER"))
 
 	if _, err := globals.Globaldb.Exec("DELETE FROM people WHERE admn_hash=$1", peppered); err != nil {
