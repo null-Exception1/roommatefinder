@@ -1,3 +1,6 @@
+##
+
+
 ## Benchmark results from different versions
 
 ### Environment
@@ -44,4 +47,6 @@
 ### notes
 - **throughput scales up** dramatically from 1 → 50 workers (almost 10×).  
 - **diminishing returns** kick in after ~50 workers — at 100, throughput drops due to DB pool saturation, goroutine scheduling overhead, and contention.  
-- **sweet spot** depends on CPU cores and DB connection pool size. On this machine (Intel i7‑9750H, 12 threads), ~50 workers gave peak throughput.  
+- **sweet spot** depends on CPU cores and DB connection pool size. On this machine (Intel i7‑9750H, 12 threads), ~50 workers gave peak throughput.
+
+
