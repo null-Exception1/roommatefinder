@@ -18,7 +18,7 @@ const NumCacheRoomsJobs = 1000
 const NumCacheRoomsJobsResults = 1000
 
 var Globaldb *sql.DB
-var Ticker *time.Ticker
+var Ticker *time.Ticker = time.NewTicker(200 * time.Millisecond)
 var RatelimitChannel chan time.Time
 
 // For caching blocks

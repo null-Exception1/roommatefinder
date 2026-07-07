@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"encoding/json"
 	"fmt"
 	"golang/caching"
 	"golang/globals"
@@ -41,8 +42,15 @@ func Rooms(w http.ResponseWriter, req *http.Request) {
 				globals.CacheHits.Add(1)
 			}
 		} else { // edge case where we don't even have the key in cache
-			logrus.Debug("CACHE MISS!")
-			caching.AddCacheRoomsJob(blockno)
+			logrus.Debug("CACHE MISS! || FIRST TIME EVER LOAD")
+
+			// this time, actually wait and do the process instead of skipping
+			rooms := caching.FormRooms(blockno)
+			bytes, _ := json.Marshal(rooms)
+			globals.CachedRoomsJSON.Store(blockno, string(bytes))
+			globals.CacheBlocksExpiry.Store(blockno, time.Now().Add(globals.CacheRoomsSeconds*time.Second))
+
+			//caching.AddCacheRoomsJob(blockno)
 			globals.CacheMisses.Add(1)
 		}
 

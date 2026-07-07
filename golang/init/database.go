@@ -11,6 +11,7 @@ import (
 
 func Database() {
 	connStr := os.Getenv("DATABASE_URL")
+	logrus.Debug(connStr)
 	//connStr = "postgres://devuser:devpass@localhost:5432/roommatefinder?sslmode=disable"
 	var err any
 	globals.Globaldb, err = sql.Open("postgres", connStr)

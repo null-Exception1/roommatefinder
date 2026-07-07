@@ -18,7 +18,6 @@ func main() {
 	godotenv.Load()
 	initfuncs.Logging()
 	initfuncs.Database()
-
 	defer globals.Globaldb.Close()
 
 	globals.RatelimitChannel = make(chan time.Time, 20)
@@ -36,6 +35,7 @@ func main() {
 			}
 		})
 	}
+
 	http.HandleFunc("/registration", handlers.Ratelimit(handlers.RegistrationHandler))
 	http.HandleFunc("/rooms", handlers.Ratelimit(handlers.Rooms))
 	http.HandleFunc("/blocks", handlers.Ratelimit(handlers.Blocks))
