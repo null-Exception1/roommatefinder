@@ -32,6 +32,16 @@
 | **RoomsBlocksHandler**     | 1,000,000,000 | 0.0003799 ns | 0        | 0         |
 
 ---
-# next up
-- worker pools implementation
-- fan in/ fan out implementation
+
+## Worker Pool Benchmark Results
+
+| NumWorkers | Requests/sec | ns/op   | B/op    | Allocs/op |
+|------------|--------------|---------|---------|-----------|
+| 1          | 2,705        | 369,634 | 13,353  | 124       |
+| 50         | 25,360       | 39,433  | 10,325  | 85        |
+| 100        | 13,000       | ~77,000 | (varies)| (varies)  |
+
+### notes
+- **throughput scales up** dramatically from 1 → 50 workers (almost 10×).  
+- **diminishing returns** kick in after ~50 workers — at 100, throughput drops due to DB pool saturation, goroutine scheduling overhead, and contention.  
+- **sweet spot** depends on CPU cores and DB connection pool size. On this machine (Intel i7‑9750H, 12 threads), ~50 workers gave peak throughput.  
