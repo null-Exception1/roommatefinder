@@ -44,5 +44,5 @@ func main() {
 	http.HandleFunc("/logout", handlers.Ratelimit(handlers.Logout))
 	http.HandleFunc("/delete", handlers.Ratelimit(handlers.DeleteHandler))
 
-	http.ListenAndServe("localhost:8080", nil)
+	http.ListenAndServe("0.0.0.0:8080", nil)
 }

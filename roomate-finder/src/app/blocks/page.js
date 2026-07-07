@@ -5,7 +5,10 @@ import Breadcumbs from "@/components/breadcrumbs";
 import { useEffect, useState } from "react";
 
 export default function Blocks() {
-  const url = `http://localhost:8080/blocks`;
+  const baseURL = process.env.NEXT_PUBLIC_API_URL;
+
+  const url = `${baseURL}/blocks`;
+  console.log(url)
   const [loaded, setLoaded] = useState(false)
   const [loaded_data, setLoadedData] = useState([])
 
@@ -43,8 +46,8 @@ export default function Blocks() {
               <Card
                 key={blockID}
                 BlockID={blockID}
-                PartialCount={value.PartialCount}
-                FullCount={value.FullCount}
+                PartialCount={value.Partial}
+                FullCount={value.Full}
               />
             ))
 

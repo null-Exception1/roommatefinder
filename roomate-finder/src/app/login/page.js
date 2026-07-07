@@ -13,12 +13,12 @@ export default function Login() {
     const hashBuffer = await crypto.subtle.digest("SHA-256", data);
     const hashArray = Array.from(new Uint8Array(hashBuffer));
     const hashHex = hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
-
+    const baseURL = process.env.NEXT_PUBLIC_API_URL;
     const queryParams = new URLSearchParams({
       admn_hash: hashHex,
       name: name
     });
-    const url = `http://localhost:8080/login?${queryParams}`;
+    const url = `${baseURL}/login?${queryParams}`;
 
     fetch(url, {
       credentials: "include"

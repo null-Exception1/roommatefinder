@@ -5,21 +5,23 @@ export default function Navbar() {
   const [valid, setValid] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
+  const baseURL = process.env.NEXT_PUBLIC_API_URL;
+
   useEffect(() => {
-    fetch("http://localhost:8080/verify", { credentials: "include" })
+    fetch(`${baseURL}/verify`, { credentials: "include" })
       .then(res => res.text())
       .then(data => setValid(data === "valid"))
       .catch(() => setValid(false));
   }, []);
 
   const handleLogout = () => {
-    fetch("http://localhost:8080/logout", { credentials: "include" })
+    fetch(`${baseURL}/logout`, { credentials: "include" })
       .then(() => setValid(false))
       .catch(() => setValid(false));
   };
 
   const handleDelete = () => {
-    fetch("http://localhost:8080/delete", {
+    fetch(`${baseURL}/delete`, {
       method: "POST",
       credentials: "include"
     })

@@ -1,5 +1,3 @@
-version: '3.9'
-
 services:
   postgres:
     image: postgres:16
@@ -13,6 +11,38 @@ services:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  golang:
+    build: ./golang
+    container_name: go-backend
+    restart: always
+    environment:
+      DATABASE_URL: postgres://devuser:devpass@postgres:5432/roommatefinder?sslmode=disable
+      LOG_FORMAT: text
+      LOG_LEVEL: debug
+      CACHING: true
+      PEPPER: prabhansharularegaytogether
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+      
+  roomate-finder:
+    build: ./roomate-finder
+    container_name: nextjs-frontend
+    restart: always
+    command: npm run dev
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8080
+      SERVER_API_URL: http://go-backend:8080
+    ports:
+      - "3000:3000"
+    depends_on:
+      - golang
+    volumes:
+      - ./roomate-finder:/app 
+      - /app/node_modules
 
 volumes:
   pgdata:

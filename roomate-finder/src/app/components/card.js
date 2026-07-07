@@ -6,10 +6,11 @@ export default function Card({ BlockID, PartialCount, FullCount }) {
         <h2 className="card-title">BLOCK {BlockID}</h2>
         <div className="flex flex-wrap justify-center gap-2">
           <span className="inline-block text-sm bg-red-500 text-white px-2 py-1 rounded">
-            {PartialCount} FULL
+            {FullCount} FULL
           </span>
           <span className="inline-block text-sm bg-orange-500 text-white px-2 py-1 rounded">
-            {FullCount} PARTIAL
+
+            {PartialCount} PARTIAL
           </span>
         </div>
       </div>

@@ -27,8 +27,8 @@ export default function Register() {
       blockno,
       created_at: "now"
     });
-
-    const url = `http://localhost:8080/registration?${queryParams}`;
+    const baseURL = process.env.NEXT_PUBLIC_API_URL;
+    const url = `${baseURL}/registration?${queryParams}`;
     console.log("Request URL:", url);
 
     fetch(url, {

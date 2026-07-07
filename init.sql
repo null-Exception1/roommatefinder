@@ -1,0 +1,16 @@
+CREATE TABLE people (
+  admn_hash TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  social TEXT NOT NULL,
+  socialtype TEXT NOT NULL,
+  roomno TEXT NOT NULL,
+  blockno TEXT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE sessions (
+  id TEXT PRIMARY KEY,
+  admnno TEXT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  expires_at TIMESTAMP
+);

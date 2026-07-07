@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"golang/globals"
 	"net/http"
+
+	"github.com/sirupsen/logrus"
 )
 
 func DeleteHandler(w http.ResponseWriter, req *http.Request) {
@@ -12,6 +14,14 @@ func DeleteHandler(w http.ResponseWriter, req *http.Request) {
 	w.Header().Set("Content-Type", "application/text")
 
 	cookie, err := req.Cookie("sess_id")
+
+	logrus.WithFields(logrus.Fields{
+		"package":  "handlers",
+		"endpoint": "/delete",
+		"method":   req.Method,
+		"remote":   req.RemoteAddr,
+	}).Info("/delete incoming req")
+
 	if err != nil {
 		http.Error(w, "no session", http.StatusUnauthorized)
 		return

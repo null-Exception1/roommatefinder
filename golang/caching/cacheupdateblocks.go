@@ -63,6 +63,7 @@ func CacheBlocksUpdate() {
 	globals.CacheMutex.Lock()
 	bytes, err := json.Marshal(Block)
 	globals.CachedBlocksJSON = string(bytes)
+	globals.CacheExpiry = time.Now().Add(globals.CacheBlocksSeconds * time.Second)
 	globals.CacheMutex.Unlock()
 
 	if err != nil {
@@ -71,7 +72,6 @@ func CacheBlocksUpdate() {
 			"err":     err,
 		}).Error("error in JSON.Marshal")
 	}
-	globals.CacheExpiry = time.Now().Add(globals.CacheBlocksSeconds * time.Second)
 
 	logrus.WithFields(logrus.Fields{
 		"package": "caching",

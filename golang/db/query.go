@@ -11,6 +11,10 @@ func Query(query string, db *sql.DB) []structs.Person {
 
 	rows, _ := db.Query(query)
 
+	if rows != nil {
+		defer rows.Close()
+	}
+
 	logrus.WithFields(logrus.Fields{
 		"package":  "db",
 		"function": "query",
@@ -43,6 +47,7 @@ func Query(query string, db *sql.DB) []structs.Person {
 		}
 
 	}
+	defer rows.Close()
 	logrus.WithFields(logrus.Fields{
 		"package":  "db",
 		"function": "query",

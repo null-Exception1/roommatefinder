@@ -4,9 +4,9 @@ import Navbar from "./components/navbar";
 
 export default function Home() {
   const [valid, setValid] = useState(false);
-
+  const baseURL = process.env.NEXT_PUBLIC_API_URL;
   useEffect(() => {
-    fetch("http://localhost:8080/verify", { credentials: "include" })
+    fetch(`${baseURL}/verify`, { credentials: "include" })
       .then(res => res.text())
       .then(data => setValid(data === "valid"))
       .catch(() => setValid(false));
@@ -24,6 +24,7 @@ export default function Home() {
             <h5 className="text-center text-2xl">alright bro what do you wanna do add yourself?</h5>
             <div className="justify-center card-actions">
               {valid ? (
+                // eslint-disable-next-line @next/next/no-html-link-for-pages
                 <a className="btn btn-neutral" href="/">Register</a>
               ) : (
                 <a className="btn btn-primary" href="/register">Register</a>

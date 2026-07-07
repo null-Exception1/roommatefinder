@@ -5,8 +5,8 @@ import Breadcumbs from "@/components/breadcrumbs";
 // This remains an async Server Component
 export default async function Block({ params }) {
   const { id } = await params; // Await params directly on the server
-
-  const res = await fetch(`http://localhost:8080/rooms?block=${id}`);
+  const baseURL = process.env.SERVER_API_URL;
+  const res = await fetch(`${baseURL}/rooms?block=${id}`);
   const loaded_data = await res.json();
 
   return (

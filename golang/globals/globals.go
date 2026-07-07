@@ -17,8 +17,8 @@ func SecureHash(admnHash string, pepper string) string {
 }
 
 // Editables
-const CacheBlocksSeconds = 60
-const CacheRoomsSeconds = 60
+const CacheBlocksSeconds = 5
+const CacheRoomsSeconds = 5
 const CacheBlocksRoutine = 30
 const CacheRoomsRoutine = 30
 const NumWorkers = 50

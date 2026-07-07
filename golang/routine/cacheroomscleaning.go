@@ -11,12 +11,16 @@ import (
 func CacheRoomsCleanup() {
 	ticker := time.NewTicker(globals.CacheRoomsRoutine * time.Minute)
 	for range ticker.C {
-		if time.Now().After(globals.CacheExpiry) {
-			logrus.Info("cache rooms cleaning started")
-			for block := range globals.CacheRooms {
+		logrus.Info("cache rooms cleaning started")
+		globals.CachedRoomsJSON.Range(func(key, value any) bool {
+			if block, ok := key.(string); ok {
 				caching.CacheRoomsUpdate(block)
+			} else {
+				logrus.Warn("found a non-string key inside CachedRoomsJSON map")
 			}
-			logrus.Info("cache rooms cleaning ended")
-		}
+			return true
+		})
+		logrus.Info("cache rooms cleaning ended")
+
 	}
 }
