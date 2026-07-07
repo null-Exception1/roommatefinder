@@ -7,6 +7,7 @@ import (
 	"golang/db"
 	"golang/globals"
 	"net/http"
+	"os"
 
 	"github.com/sirupsen/logrus"
 )
@@ -42,7 +43,10 @@ func Login(w http.ResponseWriter, req *http.Request) {
 
 	q := req.URL.Query()
 	// check if it exist
-	str := "SELECT * FROM people WHERE admn_hash='" + q.Get("admn_hash") + "' AND name='" + q.Get("name") + "'"
+	admnno := q.Get("admn_hash")
+	admn_hash := globals.SecureHash(admnno, os.Getenv("PEPPER"))
+
+	str := "SELECT * FROM people WHERE admn_hash='" + admn_hash + "' AND name='" + q.Get("name") + "'"
 
 	logrus.WithFields(logrus.Fields{
 		"package":  "handlers",
@@ -66,7 +70,7 @@ func Login(w http.ResponseWriter, req *http.Request) {
 		token, _ := RandomToken(16)
 
 		// flow for adding new session
-		globals.Globaldb.Exec("INSERT INTO sessions (id, admnno, expires_at) VALUES ($1, $2, NOW() + interval '1 day');", token, q.Get("admn_hash"))
+		globals.Globaldb.Exec("INSERT INTO sessions (id, admnno, expires_at) VALUES ($1, $2, NOW() + interval '1 day');", token, admn_hash)
 
 		http.SetCookie(w, &http.Cookie{
 			Name:     "sess_id",

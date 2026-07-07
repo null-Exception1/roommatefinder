@@ -6,11 +6,13 @@ import (
 	"golang/globals"
 	"golang/structs"
 	"net/http"
+	"os"
 
 	"github.com/sirupsen/logrus"
 )
 
 func RegistrationHandler(w http.ResponseWriter, req *http.Request) {
+
 	logrus.WithFields(logrus.Fields{
 		"package":  "handlers",
 		"endpoint": "/registration",
@@ -27,7 +29,9 @@ func RegistrationHandler(w http.ResponseWriter, req *http.Request) {
 
 	query := req.URL.Query()
 
-	admnno := query.Get("admnno")
+	admnno := query.Get("admn_hash")
+	admn_hash := globals.SecureHash(admnno, os.Getenv("PEPPER"))
+
 	name := query.Get("name")
 	social := query.Get("social")
 	socialtype := query.Get("socialtype")
@@ -35,7 +39,7 @@ func RegistrationHandler(w http.ResponseWriter, req *http.Request) {
 	roomno := query.Get("roomno")
 	created_at := query.Get("created_at")
 
-	p := structs.Person{Admnno: admnno, Name: name, Social: social, Socialtype: socialtype, Roomno: roomno, Blockno: blockno, Created_at: created_at}
+	p := structs.Person{Admnno: admn_hash, Name: name, Social: social, Socialtype: socialtype, Roomno: roomno, Blockno: blockno, Created_at: created_at}
 
 	logrus.WithFields(logrus.Fields{
 		"package":  "handlers",
@@ -67,7 +71,7 @@ func RegistrationHandler(w http.ResponseWriter, req *http.Request) {
 			return
 		}
 		// flow for adding new session
-		_, err = globals.Globaldb.Exec("INSERT INTO sessions (id, admnno, expires_at) VALUES ($1, $2, NOW() + interval '1 day');", token, admnno)
+		_, err = globals.Globaldb.Exec("INSERT INTO sessions (id, admnno, expires_at) VALUES ($1, $2, NOW() + interval '1 day');", token, admn_hash)
 
 		if err != nil {
 			logrus.WithError(err).Error("failed to insert new session")

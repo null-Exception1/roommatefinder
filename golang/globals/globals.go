@@ -1,12 +1,20 @@
 package globals
 
 import (
+	"crypto/sha256"
 	"database/sql"
+	"encoding/hex"
 	"golang/structs"
 	"sync"
 	"sync/atomic"
 	"time"
 )
+
+func SecureHash(admnHash string, pepper string) string {
+	data := []byte(admnHash + pepper)
+	sum := sha256.Sum256(data)
+	return hex.EncodeToString(sum[:])
+}
 
 // Editables
 const CacheBlocksSeconds = 60

@@ -7,9 +7,15 @@ export default function Login() {
   const [name, setName] = useState("");
   const [error, setError] = useState(""); // track error message
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(admnno); // concat admnno + name
+    const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const hashHex = hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
+
     const queryParams = new URLSearchParams({
-      admn_hash: admnno,
+      admn_hash: hashHex,
       name: name
     });
     const url = `http://localhost:8080/login?${queryParams}`;
