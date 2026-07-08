@@ -20,7 +20,7 @@ func Blocks(w http.ResponseWriter, req *http.Request) {
 		"remote":   req.RemoteAddr,
 	}).Info("requested /blocks by ", req.RemoteAddr)
 
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+	w.Header().Set("Access-Control-Allow-Origin", os.Getenv("SITE_URL"))
 	w.Header().Set("Access-Control-Allow-Credentials", "true")
 	w.Header().Set("Access-Control-Allow-Methods", "GET, OPTIONS")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")

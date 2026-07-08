@@ -4,12 +4,13 @@ import (
 	"fmt"
 	"golang/globals"
 	"net/http"
+	"os"
 
 	"github.com/sirupsen/logrus"
 )
 
 func DeleteHandler(w http.ResponseWriter, req *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+	w.Header().Set("Access-Control-Allow-Origin", os.Getenv("SITE_URL"))
 	w.Header().Set("Access-Control-Allow-Credentials", "true")
 	w.Header().Set("Content-Type", "application/text")
 
