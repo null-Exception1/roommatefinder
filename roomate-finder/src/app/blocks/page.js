@@ -8,7 +8,7 @@ export default function Blocks() {
   const baseURL = process.env.NEXT_PUBLIC_API_URL;
 
   const url = `${baseURL}/blocks`;
-  console.log(url)
+  //console.log(url)
   const [loaded, setLoaded] = useState(false)
   const [loaded_data, setLoadedData] = useState([])
 
@@ -30,8 +30,7 @@ export default function Blocks() {
             >
               <option disabled={true}>Pick a campus</option>
               <option className="bg-white text-black">Main Campus</option>
-              <option className="bg-white text-black">Bangalore</option>
-              <option className="bg-white text-black">Jaipur</option>
+              <option className="bg-white text-black">Coming soon</option>
             </select>
           </fieldset>
         </div>
@@ -51,7 +50,7 @@ export default function Blocks() {
               />
             ))
 
-          ) : (<div></div>)}
+          ) : (<span className="loading loading-spinner loading-xl"></span>)}
         </div>
 
       </div>
