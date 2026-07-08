@@ -14,7 +14,7 @@ func Insert(person structs.Person, db *sql.DB) bool {
 		"function": "insert",
 	}).Debug("insert request to db initiated")
 
-	_, err := db.Exec(`INSERT INTO people VALUES ($1 , $2, $3, $4, $5, $6)`, person.Admnno, person.Name, person.Social, person.Socialtype, person.Roomno, person.Blockno)
+	_, err := db.Exec(`INSERT INTO people (admn_hash, name, social, socialtype, roomno, blockno) VALUES ($1 , $2, $3, $4, $5, $6)`, person.Admnno, person.Name, person.Social, person.Socialtype, person.Roomno, person.Blockno)
 
 	if err == nil {
 		logrus.WithFields(logrus.Fields{
