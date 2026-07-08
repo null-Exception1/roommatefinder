@@ -5,14 +5,13 @@ import (
 	"fmt"
 	"golang/globals"
 	"net/http"
-	"os"
 	"time"
 
 	"github.com/sirupsen/logrus"
 )
 
 func Verify(w http.ResponseWriter, req *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", os.Getenv("SITE_URL"))
+	w.Header().Set("Access-Control-Allow-Origin", req.Header.Get("Origin"))
 	w.Header().Set("Access-Control-Allow-Credentials", "true")
 	w.Header().Set("Access-Control-Allow-Methods", "GET, OPTIONS")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
