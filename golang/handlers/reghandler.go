@@ -84,8 +84,8 @@ func RegistrationHandler(w http.ResponseWriter, req *http.Request) {
 			Value:    token,
 			Path:     "/",
 			HttpOnly: true,
-			Secure:   false, // true if HTTPS
-			SameSite: http.SameSiteLaxMode,
+			Secure:   true,                  // MUST be true for cross-site cookie delivery over HTTPS
+			SameSite: http.SameSiteNoneMode, // MUST be None to allow the Vercel -> Render jump
 		})
 
 		logrus.WithFields(logrus.Fields{

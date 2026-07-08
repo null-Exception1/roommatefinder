@@ -77,8 +77,8 @@ func Login(w http.ResponseWriter, req *http.Request) {
 			Value:    token,
 			Path:     "/",
 			HttpOnly: true,
-			Secure:   true,                  // must be true on plain http://localhost
-			SameSite: http.SameSiteNoneMode, // <-- allow cross-port
+			Secure:   true,                  // MUST be true for cross-site cookie delivery over HTTPS
+			SameSite: http.SameSiteNoneMode, // MUST be None to allow the Vercel -> Render jump
 		})
 
 		logrus.WithFields(logrus.Fields{
