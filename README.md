@@ -1,5 +1,7 @@
 ##
-blog - https://null-exception1.github.io/blog/posts/roommatefinder
+blog (for more details) - https://null-exception1.github.io/blog/posts/roommatefinder
+## Stack
+NextJS + Go + PostGresDB
 ## Benchmark results from different versions
 
 ### Environment
