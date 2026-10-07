@@ -12,6 +12,8 @@ NextJS + Go + PostGresDB
 
 ---
 
+NOTE: these benchmarks are outdated and are solely from the time of development, production benchmarks are reproduction with the same conclusions
+
 ### Without Caching
 | Benchmark                  | Iterations | Time/op      | Bytes/op | Allocs/op |
 |----------------------------|------------|--------------|----------|-----------|
