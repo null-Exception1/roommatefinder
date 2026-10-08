@@ -55,40 +55,8 @@ NOTE: these benchmarks are outdated and are solely from the time of development,
 
 # Final production results of BlocksHandler
 
-# Caching on
-```
-Running tool: /usr/local/go/bin/go test -test.fullpath=true -benchmem -run=^$ -bench ^BenchmarkBlocksHandler$ golang/benchmarks/simplefetch
 
-goos: linux
-goarch: amd64
-pkg: golang/benchmarks/simplefetch
-cpu: Intel(R) Core(TM) i7-9750H CPU @ 2.60GHz
-=== RUN   BenchmarkBlocksHandler
-BenchmarkBlocksHandler
-CACHING:  true
-CACHE HITS:  200
-CACHE MISSES:  1
-CACHING:  true
-CACHE HITS:  401
-CACHE MISSES:  1
-CACHING:  true
-CACHE HITS:  602
-CACHE MISSES:  1
-CACHING:  true
-CACHE HITS:  803
-CACHE MISSES:  1
-CACHING:  true
-CACHE HITS:  1004
-CACHE MISSES:  1
-CACHING:  true
-CACHE HITS:  1205
-CACHE MISSES:  1
-BenchmarkBlocksHandler-4        1000000000               0.002969 ns/op        0 B/op          0 allocs/op
-PASS
-ok      golang/benchmarks/simplefetch   0.037s
-```
-
-# Caching off
+# No caching
 ```
 Running tool: /usr/local/go/bin/go test -test.fullpath=true -benchmem -run=^$ -bench ^BenchmarkBlocksHandler$ golang/benchmarks/simplefetch
 
@@ -101,33 +69,28 @@ BenchmarkBlocksHandler
 CACHING:  false
 CACHE HITS:  0
 CACHE MISSES:  0
-CACHING:  false
-CACHE HITS:  0
-CACHE MISSES:  0
-CACHING:  false
-CACHE HITS:  0
-CACHE MISSES:  0
-CACHING:  false
-CACHE HITS:  0
-CACHE MISSES:  0
-CACHING:  false
-CACHE HITS:  0
-CACHE MISSES:  0
-CACHING:  false
-CACHE HITS:  0
-CACHE MISSES:  0
-CACHING:  false
-CACHE HITS:  0
-CACHE MISSES:  0
-CACHING:  false
-CACHE HITS:  0
-CACHE MISSES:  0
-CACHING:  false
-CACHE HITS:  0
-CACHE MISSES:  0
-BenchmarkBlocksHandler-4        1000000000               0.07595 ns/op         0 B/op          0 allocs/op
+BenchmarkBlocksHandler-4             157           7382362 ns/op          293677 B/op       2777 allocs/op
 PASS
-ok      golang/benchmarks/simplefetch   0.678s
+ok      golang/benchmarks/simplefetch   1.166s
+```
+
+
+# With Caching
+```
+Running tool: /usr/local/go/bin/go test -test.fullpath=true -benchmem -run=^$ -bench ^BenchmarkBlocksHandler$ golang/benchmarks/simplefetch
+
+goos: linux
+goarch: amd64
+pkg: golang/benchmarks/simplefetch
+cpu: Intel(R) Core(TM) i7-9750H CPU @ 2.60GHz
+=== RUN   BenchmarkBlocksHandler
+BenchmarkBlocksHandler
+CACHING:  true
+CACHE HITS:  87716
+CACHE MISSES:  1
+BenchmarkBlocksHandler-4            4177            286186 ns/op          197142 B/op       1681 allocs/op
+PASS
+ok      golang/benchmarks/simplefetch   1.204s
 ```
 
 # Final production results of RoomsBlocksHandler
