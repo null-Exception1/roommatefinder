@@ -12,7 +12,7 @@ NextJS + Go + PostGresDB
 
 ---
 
-NOTE: these benchmarks are outdated and are solely from the time of development, production benchmarks are reproduction with the same conclusions
+NOTE: these benchmarks are outdated and are solely from the time of development, production benchmarks are below this one
 
 ### Without Caching
 | Benchmark                  | Iterations | Time/op      | Bytes/op | Allocs/op |
@@ -53,3 +53,112 @@ NOTE: these benchmarks are outdated and are solely from the time of development,
 - **sweet spot** depends on CPU cores and DB connection pool size. On this machine (Intel i7‑9750H, 12 threads), ~50 workers gave peak throughput.
 
 
+# Final production results of BlocksHandler
+
+# Caching on
+```
+Running tool: /usr/local/go/bin/go test -test.fullpath=true -benchmem -run=^$ -bench ^BenchmarkBlocksHandler$ golang/benchmarks/simplefetch
+
+goos: linux
+goarch: amd64
+pkg: golang/benchmarks/simplefetch
+cpu: Intel(R) Core(TM) i7-9750H CPU @ 2.60GHz
+=== RUN   BenchmarkBlocksHandler
+BenchmarkBlocksHandler
+CACHING:  true
+CACHE HITS:  200
+CACHE MISSES:  1
+CACHING:  true
+CACHE HITS:  401
+CACHE MISSES:  1
+CACHING:  true
+CACHE HITS:  602
+CACHE MISSES:  1
+CACHING:  true
+CACHE HITS:  803
+CACHE MISSES:  1
+CACHING:  true
+CACHE HITS:  1004
+CACHE MISSES:  1
+CACHING:  true
+CACHE HITS:  1205
+CACHE MISSES:  1
+BenchmarkBlocksHandler-4        1000000000               0.002969 ns/op        0 B/op          0 allocs/op
+PASS
+ok      golang/benchmarks/simplefetch   0.037s
+```
+
+# Caching off
+```
+Running tool: /usr/local/go/bin/go test -test.fullpath=true -benchmem -run=^$ -bench ^BenchmarkBlocksHandler$ golang/benchmarks/simplefetch
+
+goos: linux
+goarch: amd64
+pkg: golang/benchmarks/simplefetch
+cpu: Intel(R) Core(TM) i7-9750H CPU @ 2.60GHz
+=== RUN   BenchmarkBlocksHandler
+BenchmarkBlocksHandler
+CACHING:  false
+CACHE HITS:  0
+CACHE MISSES:  0
+CACHING:  false
+CACHE HITS:  0
+CACHE MISSES:  0
+CACHING:  false
+CACHE HITS:  0
+CACHE MISSES:  0
+CACHING:  false
+CACHE HITS:  0
+CACHE MISSES:  0
+CACHING:  false
+CACHE HITS:  0
+CACHE MISSES:  0
+CACHING:  false
+CACHE HITS:  0
+CACHE MISSES:  0
+CACHING:  false
+CACHE HITS:  0
+CACHE MISSES:  0
+CACHING:  false
+CACHE HITS:  0
+CACHE MISSES:  0
+CACHING:  false
+CACHE HITS:  0
+CACHE MISSES:  0
+BenchmarkBlocksHandler-4        1000000000               0.07595 ns/op         0 B/op          0 allocs/op
+PASS
+ok      golang/benchmarks/simplefetch   0.678s
+```
+
+# Final production results of RoomsBlocksHandler
+
+# No caching
+```
+Running tool: /usr/local/go/bin/go test -test.fullpath=true -benchmem -run=^$ -bench ^BenchmarkRoomsBlocksHandler$ golang/benchmarks/simplefetch
+
+goos: linux
+goarch: amd64
+pkg: golang/benchmarks/simplefetch
+cpu: Intel(R) Core(TM) i7-9750H CPU @ 2.60GHz
+=== RUN   BenchmarkRoomsBlocksHandler
+BenchmarkRoomsBlocksHandler
+BenchmarkRoomsBlocksHandler-4              10000            108929 ns/op              9180 req/s           14851 B/op             143 allocs/op
+PASS
+ok      golang/benchmarks/simplefetch   1.431s
+```
+
+# With caching
+
+```
+Running tool: /usr/local/go/bin/go test -test.fullpath=true -benchmem -run=^$ -bench ^BenchmarkRoomsBlocksHandler$ golang/benchmarks/simplefetch
+
+goos: linux
+goarch: amd64
+pkg: golang/benchmarks/simplefetch
+cpu: Intel(R) Core(TM) i7-9750H CPU @ 2.60GHz
+=== RUN   BenchmarkRoomsBlocksHandler
+BenchmarkRoomsBlocksHandler
+BenchmarkRoomsBlocksHandler-4              18542             87024 ns/op             11491 req/s           11587 B/op             101 allocs/op
+PASS
+ok      golang/benchmarks/simplefetch   2.968s
+```
